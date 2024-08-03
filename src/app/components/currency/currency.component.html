@@ -1,0 +1,19 @@
+<div class="middle">
+    <input type="text" [(ngModel)]="amount1" (ngModelChange)="convert('first')" />
+    <select [(ngModel)]="currency1" (ngModelChange)="convert('first')">
+        <option *ngFor="let currency of currencies">{{ currency.ccy }}</option>
+        <option>UAH</option>
+    </select>
+    <br>
+    <input type="text" [(ngModel)]="amount2" (ngModelChange)="convert('second')" />
+    <select [(ngModel)]="currency2" (ngModelChange)="convert('second')">
+        <option *ngFor="let currency of currencies">{{ currency.ccy }}</option>
+        <option>UAH</option>
+    </select>
+</div>
+
+
+
+
+
+

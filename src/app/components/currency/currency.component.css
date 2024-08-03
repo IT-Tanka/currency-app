@@ -1,0 +1,23 @@
+select{
+    width:40%;
+    height: 30px;
+    border:1px solid white;
+    border-radius: 3px;
+}
+input{
+    width: 60%;
+    max-width: 360px;
+    height: 30px;
+    border:1px solid blue;
+    border-radius: 3px;
+}
+.middle{
+    padding: 50px 0;
+    max-width: 600px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: auto;
+    align-items: center;
+
+}

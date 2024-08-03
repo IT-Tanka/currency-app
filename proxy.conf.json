@@ -1,0 +1,12 @@
+
+{
+  "/api": {
+    "target": "https://api.privatbank.ua",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/api": ""
+    }
+  }
+}
