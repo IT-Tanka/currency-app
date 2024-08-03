@@ -18,7 +18,7 @@
 
 ## Implementation
 
-I implemented this task using Angular. The application fetches current exchange rates from a public API PrivaBank and displays them in the header. The currency conversion component allows users to input values and select currencies, automatically updating conversion rates in both directions based on user input and selected currencies.
+I implemented this task using Angular. The application fetches current exchange rates from a PrivatBank public API  and displays them in the header. The currency conversion component allows users to input values and select currencies, automatically updating conversion rates  in both directions based on user input and selected currencies.
  ![](screen.png)
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.8.
