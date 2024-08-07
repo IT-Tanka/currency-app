@@ -1,4 +1,25 @@
-# CurrencyApp
+
+### Currency Converter
+## Task
+#### Description
+
+**Header with Exchange Rates**
+- Display current exchange rates (USD, EUR) against UAH in the header.
+- Exchange rates are fetched from a public API.
+
+**Currency Conversion Component**
+- Each currency has its own input and select elements.
+- Separate input+select for the first currency and separate input+select for the second currency.
+- The input is used to specify the number of units to convert.
+- Each select should have at least three currencies: UAH, USD, EUR.
+- Conversion should work in both directions:
+  - Changing the value in the first currency should update the value in the second, and vice versa.
+  - Changing the currency in either select should correctly update the conversion values for both currencies.
+
+## Implementation
+
+I implemented this task using Angular. The application fetches current exchange rates from a PrivatBank public API  and displays them in the header. The currency conversion component allows users to input values and select currencies, automatically updating conversion rates  in both directions based on user input and selected currencies.
+ ![](screen.png)
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.8.
 
