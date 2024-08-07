@@ -30,7 +30,7 @@ export class CurrencyComponent implements ControlValueAccessor {
 
     writeValue(value: any): void {
         if (value) {
-            this.amount = parseFloat(value.amount.toFixed(2)); 
+            this.amount = parseFloat(value.amount.toFixed(2));
             this.selectedCurrency = value.selectedCurrency;
         }
     }
@@ -44,14 +44,15 @@ export class CurrencyComponent implements ControlValueAccessor {
     }
 
     onAmountChange(event: any) {
-        let value = parseFloat(event.target.value);
-        value = isNaN(value) ? 0 : parseFloat(value.toFixed(2));
-        this.amountChange.emit(value);
-        this.onChange({ amount: value, selectedCurrency: this.selectedCurrency });
+        const value = parseFloat(event.target.value.replace(',', '.'));
+        this.amount = isNaN(value) ? 0 : parseFloat(value.toFixed(2));
+        this.amountChange.emit(this.amount);
+        this.onChange({ amount: this.amount, selectedCurrency: this.selectedCurrency });
     }
 
     onCurrencyChange(event: any) {
         const value = event.target.value;
+        this.selectedCurrency = value;
         this.currencyChange.emit(value);
         this.onChange({ amount: this.amount, selectedCurrency: value });
     }

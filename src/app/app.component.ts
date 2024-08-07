@@ -7,7 +7,6 @@ import { ICurrency } from './models/currency';
 import { CurrencyComponent } from './components/currency/currency.component';
 import { HeaderComponent } from './components/header/header.component';
 
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -30,74 +29,75 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.subscription.add(
-      interval(60000).pipe(
-        switchMap(() => this.currencyService.getAll())
-      ).subscribe((data) => {
-        this.currencies = data;
-        this.currencies.push({
-          ccy: 'UAH',
-          base_ccy: 'UAH',
-          buy: 1,
-          sale: 1
-        });
-
-        const usd = this.currencies.find(currency => currency.ccy === 'USD');
-        const eur = this.currencies.find(currency => currency.ccy === 'EUR');
-        this.usdRate = usd ? usd.buy : null;
-        this.eurRate = eur ? eur.buy : null;
-
-        this.updateConversion('currency1', 'currency2');
-        this.updateConversion('currency2', 'currency1');
-      })
-    );
-
-    this.form.get('currency1')?.valueChanges.subscribe(value => {
-      this.updateConversion('currency1', 'currency2');
-    });
-
-    this.form.get('currency2')?.valueChanges.subscribe(value => {
-      this.updateConversion('currency2', 'currency1');
-    });
-
-
-    this.currencyService.getAll().subscribe((data) => {
-      this.currencies = data;
-      this.currencies.push({
-        ccy: 'UAH',
-        base_ccy: 'UAH',
-        buy: 1,
-        sale: 1
-      });
-
-      const usd = this.currencies.find(currency => currency.ccy === 'USD');
-      const eur = this.currencies.find(currency => currency.ccy === 'EUR');
-      this.usdRate = usd ? usd.buy : null;
-      this.eurRate = eur ? eur.buy : null;
-
-      this.updateConversion('currency1', 'currency2');
-      this.updateConversion('currency2', 'currency1');
-    });
+    this.setupIntervalForCurrencyUpdates();
+    this.setupFormValueChanges();
+    this.loadInitialData();
   }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
 
-  private updateConversion(from: string, to: string) {
-    const fromValue = this.form.get(from)?.value;
-    const toValue = this.form.get(to)?.value;
+  private setupIntervalForCurrencyUpdates(): void {
+    this.subscription.add(
+      interval(1000000).pipe(
+        switchMap(() => this.currencyService.getCurrencies())
+      ).subscribe((data) => {
+        this.updateCurrencies(data);
+        this.updateConversions();
+      })
+    );
+  }
 
+  private setupFormValueChanges(): void {
+    this.form.get('currency1')?.valueChanges.subscribe(value => {
+      this.updateConversion('currency1', 'currency2', value);
+    });
+
+    this.form.get('currency2')?.valueChanges.subscribe(value => {
+      this.updateConversion('currency2', 'currency1', value);
+    });
+  }
+
+  private loadInitialData(): void {
+    this.currencyService.getCurrencies().subscribe((data) => {
+      this.updateCurrencies(data);
+      this.updateConversions();
+    });
+  }
+
+  private updateCurrencies(data: ICurrency[]): void {
+    this.currencies = [...data, { ccy: 'UAH', base_ccy: 'UAH', buy: 1, sale: 1 }];
+    this.usdRate = this.getCurrencyRate('USD');
+    this.eurRate = this.getCurrencyRate('EUR');
+  }
+
+  private getCurrencyRate(ccy: string): number | null {
+    const currency = this.currencies.find(c => c.ccy === ccy);
+    return currency ? currency.buy : null;
+  }
+
+  private updateConversions(): void {
+    this.updateConversion('currency1', 'currency2', this.form.get('currency1')?.value);
+    this.updateConversion('currency2', 'currency1', this.form.get('currency2')?.value);
+  }
+
+  private updateConversion(from: string, to: string, fromValue: any): void {
+    const toValue = this.form.get(to)?.value;
     const fromCurrency = this.currencies.find(currency => currency.ccy === fromValue.selectedCurrency);
     const toCurrency = this.currencies.find(currency => currency.ccy === toValue.selectedCurrency);
 
     if (fromCurrency && toCurrency) {
-      const convertedAmount = (fromValue.amount * (fromCurrency.sale || 1)) / (toCurrency.buy || 1);
+      const convertedAmount = this.convertAmount(fromValue.amount, fromCurrency.sale, toCurrency.buy);
       this.form.get(to)?.setValue({
-        amount: parseFloat(convertedAmount.toFixed(2)), 
+        amount: parseFloat(convertedAmount.toFixed(2)),
         selectedCurrency: toValue.selectedCurrency
       }, { emitEvent: false });
     }
   }
 
+  private convertAmount(amount: number, saleRate: number | undefined, buyRate: number | undefined): number {
+    return (amount * (saleRate || 1)) / (buyRate || 1);
+  }
 }
+
