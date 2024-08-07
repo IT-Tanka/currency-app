@@ -1,5 +1,8 @@
-<app-header></app-header>
-<div class="container">
-  <app-currency></app-currency>
-  
+<app-header   [usdRate]="usdRate" [eurRate]="eurRate"></app-header>
+<div [formGroup]="form" class="container">
+  <app-currency formControlName="currency1" [currencies]="currencies"></app-currency>
+  <app-currency formControlName="currency2" [currencies]="currencies"></app-currency>
 </div>
+
+
+

@@ -1,19 +1,19 @@
 select{
-    width:40%;
+    width:20%;
     height: 30px;
     border:1px solid white;
     border-radius: 3px;
 }
 input{
-    width: 60%;
-    max-width: 360px;
+    width: 80%;
+    max-width: 300px;
     height: 30px;
     border:1px solid blue;
     border-radius: 3px;
 }
 .middle{
-    padding: 50px 0;
-    max-width: 600px;
+    padding: 20px 0;
+    max-width: 400px;
     display: flex;
     justify-content: center;
     gap: 10px;

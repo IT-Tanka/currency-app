@@ -1,7 +1,7 @@
 <header class="flex">
     <h1>{{ title }}</h1>
-    <div   *ngIf="usdRate && eurRate">
-        <p>USD/UAH: {{ usdRate }}</p>
-        <p>EUR/UAH: {{ eurRate }}</p>
+    <div *ngIf="usdRate !== null && eurRate !== null">
+        <p>USD/UAH: {{ usdRate | number:'1.2-2' }}</p>
+        <p>EUR/UAH: {{ eurRate | number:'1.2-2' }}</p>
     </div>
 </header>

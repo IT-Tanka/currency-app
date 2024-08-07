@@ -2,7 +2,7 @@ h1{
     color:white;
 }
 header{
-    padding: 0 5px;
+    padding: 0 40px;
     background: rgb(53,46,199);
     background: linear-gradient(90deg, rgba(53,46,199,1) 3%, rgba(173,216,230,1) 32%, rgba(255,255,255,1) 89%);
 }

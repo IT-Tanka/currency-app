@@ -1,58 +1,58 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, forwardRef } from '@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
-import { CurrencyService } from '../../services/currency.service';
-import { FormsModule } from '@angular/forms';
 import { ICurrency } from '../../models/currency';
-import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-currency',
     templateUrl: './currency.component.html',
     styleUrls: ['./currency.component.css'],
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => CurrencyComponent),
+            multi: true
+        }
+    ],
     standalone: true,
-    imports: [CommonModule, HttpClientModule, FormsModule]
+    imports: [CommonModule]
 })
-export class CurrencyComponent implements OnInit, OnDestroy {
-    currencies: ICurrency[] = [];
-    currency1: string = 'USD';
-    currency2: string = 'UAH';
-    amount1: string = '1';
-    amount2: string = '0';
-    private subscription: Subscription = new Subscription();
+export class CurrencyComponent implements ControlValueAccessor {
+    @Input() currencies: ICurrency[] = [];
+    @Input() amount: number = 0;
+    @Input() selectedCurrency: string = '';
 
-    constructor(private currencyService: CurrencyService) { }
+    @Output() amountChange = new EventEmitter<number>();
+    @Output() currencyChange = new EventEmitter<string>();
 
-    ngOnInit(): void {
-        this.subscription = this.currencyService.getAll().subscribe((data: ICurrency[]) => {
-            this.currencies = data;
-            this.convert('first');
-        });
-    }
+    onChange: any = () => { };
+    onTouched: any = () => { };
 
-    ngOnDestroy(): void {
-        this.subscription.unsubscribe();
-    }
-
-    convert(source: string): void {
-        if (source === 'first') {
-            const rate1 = this.getRate(this.currency1, this.currency2);
-            this.amount2 = (parseFloat(this.amount1) * rate1).toFixed(2);
-        } else {
-            const rate2 = this.getRate(this.currency2, this.currency1);
-            this.amount1 = (parseFloat(this.amount2) * rate2).toFixed(2);
+    writeValue(value: any): void {
+        if (value) {
+            this.amount = parseFloat(value.amount.toFixed(2)); 
+            this.selectedCurrency = value.selectedCurrency;
         }
     }
 
-    getRate(from: string, to: string): number {
-        if (from === 'UAH') {
-            return 1 / (this.currencies.find(currency => currency.ccy === to)?.buy ?? 1);
-        }
-        if (to === 'UAH') {
-            return this.currencies.find(currency => currency.ccy === from)?.sale ?? 1;
-        }
-        const fromRate = this.currencies.find(currency => currency.ccy === from)?.sale ?? 1;
-        const toRate = this.currencies.find(currency => currency.ccy === to)?.buy ?? 1;
-        return fromRate / toRate;
+    registerOnChange(fn: any): void {
+        this.onChange = fn;
+    }
+
+    registerOnTouched(fn: any): void {
+        this.onTouched = fn;
+    }
+
+    onAmountChange(event: any) {
+        let value = parseFloat(event.target.value);
+        value = isNaN(value) ? 0 : parseFloat(value.toFixed(2));
+        this.amountChange.emit(value);
+        this.onChange({ amount: value, selectedCurrency: this.selectedCurrency });
+    }
+
+    onCurrencyChange(event: any) {
+        const value = event.target.value;
+        this.currencyChange.emit(value);
+        this.onChange({ amount: this.amount, selectedCurrency: value });
     }
 }
